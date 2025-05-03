@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:payment_app/component/colors.dart';
 import 'package:payment_app/component/widgets/custom_button.dart';
+import 'package:payment_app/component/widgets/custom_button_for_bottomsheet.dart';
 import 'package:payment_app/component/widgets/custom_text_size.dart';
+import 'package:payment_app/features/controller/payment_controller.dart';
+import 'package:payment_app/features/payment_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,8 +15,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final DataController _controller = Get.put(DataController());
   @override
   Widget build(BuildContext context) {
+    print(_controller.list);
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -72,7 +78,8 @@ class _HomePageState extends State<HomePage> {
                                       Positioned(
                                         bottom: 0,
                                         child: Container(
-                                          color: const Color(0xFFeef1f4).withOpacity(0.7),
+                                          color: const Color(0xFFeef1f4)
+                                              .withOpacity(0.7),
                                           width:
                                               MediaQuery.of(context).size.width,
                                           height: MediaQuery.of(context)
@@ -82,14 +89,54 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                       Positioned(
-                                        top: 0,
+                                          top: 0,
                                           left: MediaQuery.of(context)
-                                              .size
-                                              .width -
+                                                  .size
+                                                  .width -
                                               107,
-                                          child: Container(width: 60,height: 250,decoration: BoxDecoration(
-                                          color:AppColor.mainColor ,
-                                          borderRadius: BorderRadius.circular(29) ),))
+                                          child: Container(
+                                            width: 60,
+                                            height: 250,
+                                            padding: EdgeInsets.only(
+                                                top: 5, bottom: 7),
+                                            decoration: BoxDecoration(
+                                                color: AppColor.mainColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(29)),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                // SizedBox(height: 1,),
+                                                CustomBottomSheet(
+                                                  icon: Icons.cancel,
+                                                  textColor: Colors.white,
+                                                  iconColor: AppColor.mainColor,
+                                                  backgroundColor: Colors.white,
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                CustomBottomSheet(
+                                                  icon: Icons.add,
+                                                  textColor: Colors.white,
+                                                  iconColor: AppColor.mainColor,
+                                                  backgroundColor: Colors.white,
+                                                  onTap: () {},
+                                                  text: "Add Bill",
+                                                ),
+                                                CustomBottomSheet(
+                                                  icon: Icons.history,
+                                                  textColor: Colors.white,
+                                                  iconColor: AppColor.mainColor,
+                                                  backgroundColor: Colors.white,
+                                                  onTap: () {},
+                                                  text: "History",
+                                                )
+                                              ],
+                                            ),
+                                          ))
                                     ],
                                   ),
                                 ),
@@ -113,6 +160,26 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
+                  Positioned(
+                      top: 100,
+                      left: 30,
+                      child: Text(
+                        "My Bills",
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      )),
+                  Positioned(
+                      top: 120,
+                      left: 15,
+                      child: Text(
+                        "My Bills",
+                        style: TextStyle(
+                            fontSize: 60,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade800),
+                      )),
                 ],
               ),
             ),
@@ -125,7 +192,7 @@ class _HomePageState extends State<HomePage> {
                 removeTop: true,
                 context: context,
                 child: ListView.builder(
-                  itemCount: 10,
+                  itemCount: _controller.list.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                         height: 140,
@@ -191,7 +258,7 @@ class _HomePageState extends State<HomePage> {
                                             const SizedBox(
                                               width: 10,
                                             ),
-                                            const Column(
+                                            Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
                                               crossAxisAlignment:
@@ -201,7 +268,9 @@ class _HomePageState extends State<HomePage> {
                                                   height: 5,
                                                 ),
                                                 Text(
-                                                  "KenGen Power",
+                                                  _controller.list[index]
+                                                          ["brand"] ??
+                                                      "",
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: AppColor.mainColor,
@@ -209,7 +278,9 @@ class _HomePageState extends State<HomePage> {
                                                           FontWeight.w700),
                                                 ),
                                                 Text(
-                                                  "ID: 846594",
+                                                  _controller.list[index]
+                                                  ["due"] ??
+                                                      "",
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: AppColor.mainColor,
@@ -221,7 +292,7 @@ class _HomePageState extends State<HomePage> {
                                           ],
                                         ),
                                       ),
-                                      const SizedBox(
+                                      SizedBox(
                                         height: 65,
                                         // color: Colors.grey,
                                         child: Row(
@@ -234,7 +305,9 @@ class _HomePageState extends State<HomePage> {
                                               width: 8,
                                             ),
                                             SizedText(
-                                              text: "Auto pay on 24th May 18",
+                                              text: _controller.list[index]
+                                                      ["more"] ??
+                                                  "",
                                               color: Colors.red,
                                             ),
                                           ],
@@ -316,9 +389,13 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            const Positioned(
+            Positioned(
                 bottom: 10,
                 child: CustomButton(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => PaymentsPage()));
+                  },
                   text: "Pay all bills",
                   textColor: Colors.white,
                 ))

@@ -8,16 +8,43 @@ class CustomBottomSheet extends StatelessWidget {
   final Color? backgroundColor;
   final Color? iconColor;
   final Color? textColor;
-final String text;
+  final String? text;
 
-  const CustomBottomSheet({super.key, this.fontSize=20, required this.icon, this.onTap, this.backgroundColor=AppColor.mainColor, this.iconColor = Colors.white, this.textColor=AppColor.mainColor, required this.text});
+  const CustomBottomSheet(
+      {super.key,
+      this.fontSize = 20,
+      required this.icon,
+      this.onTap,
+      this.backgroundColor = AppColor.mainColor,
+      this.iconColor = Colors.white,
+      this.textColor = AppColor.mainColor,
+       this.text});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: onTap,
+    return GestureDetector(
+        onTap: onTap,
         child: Column(
           children: [
-            Container(width: 40,height: 40,decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),color: backgroundColor,),child: Icon(icon,size: 30,color: iconColor,),),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: backgroundColor,
+              ),
+              child: Icon(
+                icon,
+                size: 30,
+                color: iconColor,
+              ),
+            ),
+            text != null
+                ? Text(
+                    text!,
+                    style: TextStyle(fontSize: 14, color: textColor),
+                  )
+                : Container()
           ],
         ));
   }
